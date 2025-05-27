@@ -26,14 +26,17 @@ protected:
 	void Jump(const FInputActionValue& Value);
 
 private:
-
-
 	UPROPERTY(VisibleAnywhere, Category=Camera)
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true") )
+	class UWidgetComponent* OverheadWidget;
+
+
+	//////////////////Input//////////////////////////
 	UPROPERTY(EditDefaultsOnly, Category= Input)
 	class UInputMappingContext* BlasterCharacterContext;
 

@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -25,6 +26,13 @@ ABlasterCharacter::ABlasterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
+	OverheadWidget->SetupAttachment(RootComponent);
+	OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	OverheadWidget->SetDrawAtDesiredSize(true);
+
 
 	//CDO
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Mixamo/CharacterMaterials/Eve_By_J_Gonzales.Eve_By_J_Gonzales'");
