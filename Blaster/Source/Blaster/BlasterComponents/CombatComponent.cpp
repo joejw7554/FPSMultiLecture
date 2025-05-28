@@ -1,7 +1,9 @@
 #include "CombatComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/SphereComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+
 
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Character/BlasterCharacter.h"
@@ -12,7 +14,6 @@ UCombatComponent::UCombatComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 }
-
 
 void UCombatComponent::BeginPlay()
 {
@@ -27,7 +28,7 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 }
 
-void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
+void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 {
 	if (Character == nullptr || WeaponToEquip == nullptr) return;
 
@@ -41,7 +42,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	}
 
 	EquippedWeapon->SetOwner(Character);
-	EquippedWeapon->ShowPickupWidget(false);
+	
 
 }
 

@@ -106,7 +106,22 @@ void ABlasterCharacter::Jump(const FInputActionValue& Value)
 
 void ABlasterCharacter::EquipButtonPressed(const FInputActionValue& Value)
 {
-	if (Combat && HasAuthority())
+	if (Combat)
+	{
+		if (HasAuthority())
+		{
+			Combat->EquipWeapon(OverlappingWeapon);
+		}
+		else
+		{
+			ServerEquipButtonPressed();
+		}
+	}
+}
+
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (Combat)
 	{
 		Combat->EquipWeapon(OverlappingWeapon);
 	}
@@ -124,6 +139,7 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 		LastWeapon->ShowPickupWidget(false);
 	}
 }
+
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
@@ -147,11 +163,6 @@ void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (OverlappingWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Actor: %s  OverlappingWeapon is Valid"), *GetActorLabel());
-	}
 
 }
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

@@ -23,7 +23,7 @@ class BLASTER_API AWeapon : public AActor
 public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowPickupWidget(bool bShowWidget);
 
 protected:
@@ -45,9 +45,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	class UWidgetComponent* PickupWidget;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(ReplicatedUsing= OnRep_WeaponState, VisibleAnywhere)
 	EWeaponState WeaponState;
 
+	UFUNCTION()
+	void OnRep_WeaponState();
+
 public:
-	void SetWeaponState(EWeaponState State) { WeaponState = State; }
+	void SetWeaponState(EWeaponState State);
+	USphereComponent* GetAreaSphere() const { return AreaSphere; }
 };
