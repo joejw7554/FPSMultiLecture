@@ -19,8 +19,8 @@ UCLASS()
 class BLASTER_API AWeapon : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
 
@@ -36,15 +36,18 @@ protected:
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
-	UPROPERTY(VisibleAnywhere, Category= "Weapon Properties")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	class USphereComponent* AreaSphere;
 
-	UPROPERTY(VisibleAnywhere, Category="Widget")
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	class UWidgetComponent* PickupWidget;
 
 	UPROPERTY(VisibleAnywhere)
 	EWeaponState WeaponState;
+
+public:
+	void SetWeaponState(EWeaponState State) { WeaponState = State; }
 };

@@ -9,7 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 
-
+#include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Weapon/Weapon.h"
 
 ABlasterCharacter::ABlasterCharacter()
@@ -38,6 +38,8 @@ ABlasterCharacter::ABlasterCharacter()
 	OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	OverheadWidget->SetDrawAtDesiredSize(true);
 
+	Combat = CreateDefaultSubobject<UCombatComponent>("Combat");
+	Combat->SetIsReplicated(true);
 
 	//CDO
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'");
@@ -102,6 +104,14 @@ void ABlasterCharacter::Jump(const FInputActionValue& Value)
 	}
 }
 
+void ABlasterCharacter::EquipButtonPressed(const FInputActionValue& Value)
+{
+	if (Combat && HasAuthority())
+	{
+		Combat->EquipWeapon(OverlappingWeapon);
+	}
+}
+
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
 	if (OverlappingWeapon)
@@ -138,7 +148,7 @@ void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(OverlappingWeapon)
+	if (OverlappingWeapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Actor: %s  OverlappingWeapon is Valid"), *GetActorLabel());
 	}
@@ -160,6 +170,9 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 		if (JumpAction)
 			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Jump);
+
+		if (EquipAction)
+			EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::EquipButtonPressed);
 	}
 
 }
@@ -169,6 +182,16 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
+}
+
+void ABlasterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (Combat)
+	{
+		Combat->Character = this;
+	}
 }
 
 
