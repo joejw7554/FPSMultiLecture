@@ -7,11 +7,14 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+
+
+#include "Blaster/Weapon/Weapon.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
-
+	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 	CameraBoom->SetupAttachment(GetCapsuleComponent());
@@ -27,6 +30,8 @@ ABlasterCharacter::ABlasterCharacter()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
 	OverheadWidget->SetupAttachment(RootComponent);
@@ -35,7 +40,7 @@ ABlasterCharacter::ABlasterCharacter()
 
 
 	//CDO
-	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Mixamo/CharacterMaterials/Eve_By_J_Gonzales.Eve_By_J_Gonzales'");
+	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'");
 	if (mesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(mesh.Object);
@@ -62,21 +67,21 @@ void ABlasterCharacter::BeginPlay()
 	}
 }
 
-void ABlasterCharacter::Movement(const FInputActionValue& Value)  
-{  
-   // Get the input vector from the input action value  
-   const FVector2D InputVector = Value.Get<FVector2D>();  
+void ABlasterCharacter::Movement(const FInputActionValue& Value)
+{
+	// Get the input vector from the input action value  
+	const FVector2D InputVector = Value.Get<FVector2D>();
 
-   // Calculate the forward and right movement directions based on the character's control rotation  
-   const FRotator ControlRotation = GetControlRotation();  
-   const FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);  
+	// Calculate the forward and right movement directions based on the character's control rotation  
+	const FRotator ControlRotation = GetControlRotation();
+	const FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);
 
-   const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);  
-   const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);  
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-   // Add movement input in the forward and right directions  
-   AddMovementInput(ForwardDirection, InputVector.Y);  
-   AddMovementInput(RightDirection, InputVector.X);  
+	// Add movement input in the forward and right directions  
+	AddMovementInput(ForwardDirection, InputVector.Y);
+	AddMovementInput(RightDirection, InputVector.X);
 }
 
 void ABlasterCharacter::Look(const FInputActionValue& Value)
@@ -97,10 +102,46 @@ void ABlasterCharacter::Jump(const FInputActionValue& Value)
 	}
 }
 
+void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+{
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(true);
+	}
+
+	if (LastWeapon)
+	{
+		LastWeapon->ShowPickupWidget(false);
+	}
+}
+
+void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
+{
+	if (OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickupWidget(false);
+	}
+
+	OverlappingWeapon = Weapon;
+
+	if (IsLocallyControlled())
+	{
+		if (OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickupWidget(true);
+		}
+	}
+}
+
 
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(OverlappingWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Actor: %s  OverlappingWeapon is Valid"), *GetActorLabel());
+	}
 
 }
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -121,6 +162,13 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Jump);
 	}
 
+}
+
+void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
 }
 
 
