@@ -1,11 +1,11 @@
 #include "BlasterCharacter.h"
 
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -17,8 +17,8 @@ ABlasterCharacter::ABlasterCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
-	CameraBoom->SetupAttachment(GetCapsuleComponent());
-	CameraBoom->SetRelativeLocation(FVector(0, 0, -22.f));
+	CameraBoom->SetupAttachment(GetMesh());
+	CameraBoom->SetRelativeLocation(FVector(0, 0, 90.f));
 	CameraBoom->SocketOffset = FVector(0, 75.f, 75.f);
 	CameraBoom->TargetArmLength = 350.f;
 	CameraBoom->bUsePawnControlRotation = true;
@@ -29,9 +29,8 @@ ABlasterCharacter::ABlasterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
-
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCharacterMovement()->SetCrouchedHalfHeight(55.f);
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
 	OverheadWidget->SetupAttachment(RootComponent);
@@ -94,13 +93,13 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(InputVector.Y);
 }
 
-void ABlasterCharacter::Jump(const FInputActionValue& Value)
+void ABlasterCharacter::JumpButtonPressed(const FInputActionValue& Value)
 {
 	const bool bPressed = Value.Get<bool>();
 
 	if (bPressed)
 	{
-		ACharacter::Jump();
+		Jump();
 	}
 }
 
@@ -127,6 +126,39 @@ void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 	}
 }
 
+void ABlasterCharacter::CrouchButtonPressed(const FInputActionValue& Value)
+{
+	const bool bPressed = Value.Get<bool>();
+
+	if (bPressed)
+	{
+		if (bIsCrouched)
+		{
+			UnCrouch();
+		}
+		else
+		{
+			Crouch();
+		}
+	}
+}
+
+void ABlasterCharacter::AimButtonPressed(const FInputActionValue& Value)
+{
+	if (Combat)
+	{
+		Combat->SetAiming(true);
+	}
+}
+
+void ABlasterCharacter::AimButtonReleased(const FInputActionValue& Value)
+{
+	if (Combat)
+	{
+		Combat->SetAiming(false);
+	}
+}
+
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
 	if (OverlappingWeapon)
@@ -139,6 +171,7 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 		LastWeapon->ShowPickupWidget(false);
 	}
 }
+
 
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
@@ -164,6 +197,11 @@ bool ABlasterCharacter::IsWeaponEquipped()
 	return (Combat && Combat->EquippedWeapon);
 }
 
+bool ABlasterCharacter::IsAiming()
+{
+	return (Combat && Combat->bAiming);
+}
+
 
 void ABlasterCharacter::Tick(float DeltaTime)
 {
@@ -185,10 +223,20 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Look);
 
 		if (JumpAction)
-			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::Jump);
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::JumpButtonPressed);
 
 		if (EquipAction)
 			EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::EquipButtonPressed);
+
+		if (CrouchAction)
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ABlasterCharacter::CrouchButtonPressed);
+
+		if (AimAction)
+			EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ABlasterCharacter::AimButtonPressed);
+
+		if (AimAction)
+			EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ABlasterCharacter::AimButtonReleased);
+
 	}
 
 }

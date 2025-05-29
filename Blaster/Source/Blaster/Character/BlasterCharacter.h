@@ -23,8 +23,18 @@ protected:
 
 	void Movement(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void Jump(const FInputActionValue& Value);
+	void JumpButtonPressed(const FInputActionValue& Value);
+
+
 	void EquipButtonPressed(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerEquipButtonPressed();
+
+
+	void CrouchButtonPressed(const FInputActionValue& Value);
+
+	void AimButtonPressed(const FInputActionValue& Value);
+	void AimButtonReleased(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category=Camera)
@@ -50,13 +60,20 @@ private:
 	class UInputAction* MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* LookAction;
+	 UInputAction* LookAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* JumpAction;
+	 UInputAction* JumpAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	class UInputAction* EquipAction;
+	 UInputAction* EquipAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* CrouchAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* AimAction;
+
 
 
 
@@ -64,10 +81,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UCombatComponent* Combat;
 
-	UFUNCTION(Server, Reliable)
-	void ServerEquipButtonPressed();
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
+	bool IsAiming();
 };
