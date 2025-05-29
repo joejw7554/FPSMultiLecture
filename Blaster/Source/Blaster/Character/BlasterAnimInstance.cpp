@@ -25,4 +25,5 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	Speed = UKismetMathLibrary::VSizeXY(BlasterCharacter->GetVelocity());
 	bIsInAir = BlasterCharacter->GetCharacterMovement()->IsFalling();
 	bIsAccelerating = BlasterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f ? true : false;
+	bWeaponEquipped = BlasterCharacter->IsWeaponEquipped();
 }
