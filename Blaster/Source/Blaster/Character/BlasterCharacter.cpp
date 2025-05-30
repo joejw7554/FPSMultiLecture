@@ -49,11 +49,16 @@ ABlasterCharacter::ABlasterCharacter()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0.f));
 
+	//Check this frequently
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 void ABlasterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
