@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -30,11 +29,12 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 
-
 	void CrouchButtonPressed(const FInputActionValue& Value);
 
 	void AimButtonPressed(const FInputActionValue& Value);
 	void AimButtonReleased(const FInputActionValue& Value);
+
+	void AimOffset(float DeltaTime);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category=Camera)
@@ -74,16 +74,17 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* AimAction;
 
-
-
-
 	////////////////////Components
 	UPROPERTY(VisibleAnywhere)
 	class UCombatComponent* Combat;
 
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
+	float GetAO_Yaw() const { return AO_Yaw; }
 };

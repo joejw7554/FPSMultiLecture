@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "BlasterAnimInstance.generated.h"
@@ -44,5 +42,10 @@ private:
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
 	FRotator DeltaRotation;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AO_Yaw;
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float AO_Pitch;
 
 };
