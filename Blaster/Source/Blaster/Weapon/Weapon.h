@@ -54,4 +54,5 @@ private:
 public:
 	void SetWeaponState(EWeaponState State);
 	USphereComponent* GetAreaSphere() const { return AreaSphere; }
+	USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 };
