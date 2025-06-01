@@ -87,4 +87,6 @@ public:
 	bool IsWeaponEquipped();
 	bool IsAiming();
 	float GetAO_Yaw() const { return AO_Yaw; }
+	float GetAO_Pitch() const { return AO_Pitch; }
+
 };
