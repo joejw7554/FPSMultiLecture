@@ -32,6 +32,8 @@ ABlasterCharacter::ABlasterCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->SetCrouchedHalfHeight(55.f);
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 850.f, 0.f);
+
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
 	OverheadWidget->SetupAttachment(RootComponent);
@@ -104,11 +106,16 @@ void ABlasterCharacter::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(InputVector.Y);
 }
 
+
+
 void ABlasterCharacter::JumpButtonPressed(const FInputActionValue& Value)
 {
-	const bool bPressed = Value.Get<bool>();
 
-	if (bPressed)
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
 	{
 		Jump();
 	}
