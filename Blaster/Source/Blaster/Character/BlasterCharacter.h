@@ -84,6 +84,7 @@ private:
 	float AO_Pitch;
 	FRotator StartingAimRotation;
 
+	UPROPERTY(Replicated)
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
 
