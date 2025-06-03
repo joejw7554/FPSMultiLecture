@@ -99,10 +99,13 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 
 		if (!TraceHitResult.bBlockingHit)
 		{
+
 			TraceHitResult.ImpactPoint = End;
+			HitTaget = End;
 		}
 		else
 		{
+			HitTaget = TraceHitResult.ImpactPoint;
 			DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 12.f, 12.f, FColor::Red);
 		}
 	}
@@ -122,7 +125,7 @@ void UCombatComponent::MulticastFire_Implementation()
 	if (Character)
 	{
 		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire();
+		EquippedWeapon->Fire(HitTaget);
 	}
 }
 
