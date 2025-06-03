@@ -177,6 +177,23 @@ void ABlasterCharacter::AimButtonReleased(const FInputActionValue& Value)
 	}
 }
 
+void ABlasterCharacter::FireButtonPressed(const FInputActionValue& Value)
+{
+	const bool bPressed = Value.Get<bool>();
+	if (Combat)
+	{
+		Combat->FireButtonPressed(bPressed);
+	}
+}
+
+void ABlasterCharacter::FireButtonReleased(const FInputActionValue& Value)
+{
+	if (Combat)
+	{
+		Combat->FireButtonPressed(false);
+	}
+}
+
 void ABlasterCharacter::AimOffset(float DeltaTime)
 {
 	if (Combat && Combat->EquippedWeapon == nullptr) return;
@@ -324,6 +341,11 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		if (AimAction)
 			EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ABlasterCharacter::AimButtonReleased);
 
+		if (FireAction)
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &ABlasterCharacter::FireButtonPressed);
+
+		if (FireAction)
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ABlasterCharacter::FireButtonReleased);
 	}
 
 }
@@ -344,6 +366,17 @@ void ABlasterCharacter::PostInitializeComponents()
 	{
 		Combat->Character = this;
 	}
+}
+
+void ABlasterCharacter::PlayFireMontage(bool bAiming)
+{
+	if (Combat == nullptr || Combat->EquippedWeapon == nullptr) return;
+	{
+		FName SectionName;
+		SectionName = bAiming ? FName("RifleAim") : FName("RifleHip");
+		PlayAnimMontage(FireWeaponMontage, 1.f, SectionName);
+	}
+
 }
 
 
