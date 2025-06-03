@@ -75,6 +75,22 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 	}
 }
 
+void UCombatComponent::ServerFire_Implementation()
+{
+	MulticastFire();
+}
+
+void UCombatComponent::MulticastFire_Implementation()
+{
+	if (EquippedWeapon == nullptr) return;
+
+	if (Character)
+	{
+		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire(HitTaget);
+	}
+}
+
 void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
 	FVector2D ViewportSize;
@@ -110,23 +126,6 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		}
 	}
 
-}
-
-
-void UCombatComponent::ServerFire_Implementation()
-{
-	MulticastFire();
-}
-
-void UCombatComponent::MulticastFire_Implementation()
-{
-	if (EquippedWeapon == nullptr) return;
-
-	if (Character)
-	{
-		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire(HitTaget);
-	}
 }
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
