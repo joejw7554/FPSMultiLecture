@@ -49,6 +49,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Weapon Properties")
 	class UAnimationAsset* FireAnimation;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ACasing> CasingClass;
+
 	UPROPERTY(ReplicatedUsing= OnRep_WeaponState, VisibleAnywhere)
 	EWeaponState WeaponState;
 
