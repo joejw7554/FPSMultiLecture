@@ -8,16 +8,26 @@ UCLASS()
 class BLASTER_API ACasing : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACasing();
 
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* CasingMesh;
-public:	
-	virtual void Tick(float DeltaTime) override;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	float ShellEjectionImpulse = 10.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	class USoundCue* ShellSound;
+
 
 };
