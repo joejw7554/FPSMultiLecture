@@ -177,6 +177,14 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	SetHUDCrosshairs(DeltaTime);
+
+	if (Character && Character->IsLocallyControlled())
+	{
+		FHitResult HitReuslt;
+		TraceUnderCrosshairs(HitReuslt);
+		HitTarget = HitReuslt.ImpactPoint;
+	}
+
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever

@@ -108,5 +108,6 @@ public:
 	float GetAO_Pitch() const { return AO_Pitch; }
 	AWeapon* GetEquippedWeapon();
 	ETurningInPlace GetTurningInplace() const { return TurningInPlace; }
+	FVector GetHitTarget() const;
 
 };
