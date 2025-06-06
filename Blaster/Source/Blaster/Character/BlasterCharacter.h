@@ -109,5 +109,6 @@ public:
 	AWeapon* GetEquippedWeapon();
 	ETurningInPlace GetTurningInplace() const { return TurningInPlace; }
 	FVector GetHitTarget() const;
+	UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 };

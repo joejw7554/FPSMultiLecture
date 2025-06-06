@@ -27,6 +27,9 @@ ABlasterCharacter::ABlasterCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->bUsePawnControlRotation = false;
+	FollowCamera->PostProcessSettings.DepthOfFieldFocalDistance = 1e4;
+	FollowCamera->PostProcessSettings.DepthOfFieldFstop = 32.f;
+
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
