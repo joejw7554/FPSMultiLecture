@@ -80,9 +80,9 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 
 	if (bFireButtonPressed)
 	{
-		FHitResult HitResult;
-		TraceUnderCrosshairs(HitResult);
-		ServerFire(HitResult.ImpactPoint);
+		//FHitResult HitResult;
+		//TraceUnderCrosshairs(HitResult);
+		ServerFire(HitTarget);
 
 		if (EquippedWeapon)
 		{
@@ -229,6 +229,7 @@ void UCombatComponent::InterpFOV(float DeltaTime)
 		Character->GetFollowCamera()->SetFieldOfView(CurrentFOV);
 	}
 }
+
 
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
