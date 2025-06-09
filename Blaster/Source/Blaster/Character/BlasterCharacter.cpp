@@ -13,6 +13,7 @@
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Blaster.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -82,6 +83,11 @@ void ABlasterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	BlasterPlayerController = Cast<ABlasterPlayerController>(Controller);
+	if (BlasterPlayerController)
+	{
+		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
+	}
 
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
@@ -95,6 +101,8 @@ void ABlasterCharacter::BeginPlay()
 			InputSubsystem->AddMappingContext(BlasterCharacterContext, 0);
 		}
 	}
+
+
 }
 
 void ABlasterCharacter::Movement(const FInputActionValue& Value)
