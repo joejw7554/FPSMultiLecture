@@ -21,14 +21,13 @@ public:
 	virtual void PostInitializeComponents() override;
 	void PlayFireMontage(bool bAiming);
 
-	UFUNCTION(NetMulticast, UnReliable)
-	void MulticastHit();
-
 	virtual void OnRep_ReplicatedMovement() override;
 
 
 protected:
 	virtual void BeginPlay() override;
+
+	void UpdateHUDHealth();
 
 	void Movement(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -52,6 +51,9 @@ protected:
 	void SimProxiesTurn();
 
 	void PlayHitReactMontage();
+
+	UFUNCTION()
+	void ReceiveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category=Camera)
