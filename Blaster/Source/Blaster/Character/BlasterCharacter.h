@@ -24,8 +24,9 @@ public:
 
 	void PlayElimMontage();
 
-	UFUNCTION(NetMulticast, Reliable)
 	void Elim();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastElim();
 
 	virtual void OnRep_ReplicatedMovement() override;
 
@@ -151,6 +152,13 @@ private:
 	class ABlasterPlayerController* BlasterPlayerController;
 
 	bool bElimmed = false;
+
+	FTimerHandle ElimTimer;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ElimDelay = 5.f;
+
+	void ElimTimerFinished();
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
