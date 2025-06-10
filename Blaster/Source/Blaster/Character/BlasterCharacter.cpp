@@ -514,9 +514,18 @@ void ABlasterCharacter::PlayFireMontage(bool bAiming)
 
 }
 
-void ABlasterCharacter::Elim()
+void ABlasterCharacter::PlayElimMontage()
 {
+	if (ElimMontage)
+	{
+		PlayAnimMontage(ElimMontage);
+	}
+}
 
+void ABlasterCharacter::Elim_Implementation()
+{
+	bElimmed = true;
+	PlayElimMontage();
 }
 
 void ABlasterCharacter::PlayHitReactMontage()
