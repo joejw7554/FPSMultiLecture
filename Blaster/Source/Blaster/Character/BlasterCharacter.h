@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Components/TimelineComponent.h"
 
 #include "Blaster/Interfaces/InteractWithCrosshairsInterface.h"
 #include "Blaster/BlasterTypes/TurningInPlace.h"
@@ -159,6 +160,10 @@ private:
 	float ElimDelay = 5.f;
 
 	void ElimTimerFinished();
+
+	///Disolve Effect////////////////////////////
+
+	FOnTimelineFloat DissolveTrack;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
