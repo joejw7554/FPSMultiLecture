@@ -1,3 +1,5 @@
+#pragma once
+
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Blaster/BlasterTypes/TurningInPlace.h"
