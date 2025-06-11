@@ -50,6 +50,9 @@ ABlasterCharacter::ABlasterCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>("Combat");
 	Combat->SetIsReplicated(true);
 
+
+	DissolveTimeline = CreateDefaultSubobject<UTimelineComponent>("DissolveTimelineComponent");
+
 	//CDO
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'");
 	if (mesh.Succeeded())
@@ -389,6 +392,28 @@ void ABlasterCharacter::OnRep_Health()
 }
 
 
+void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue)
+{
+	if (!DynamicDissolveMaterialInstance.IsEmpty())
+	{
+		for (auto Instance : DynamicDissolveMaterialInstance)
+		{
+			Instance->SetScalarParameterValue(TEXT("Dissolve"), DissolveValue);
+		}
+	}
+}
+
+void ABlasterCharacter::StartDissolve()
+{
+	DissolveTrack.BindDynamic(this, &ABlasterCharacter::UpdateDissolveMaterial);
+
+	if (DissovleCurve && DissolveTimeline)
+	{
+		DissolveTimeline->AddInterpFloat(DissovleCurve, DissolveTrack);
+		DissolveTimeline->Play();
+	}
+}
+
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
 {
 	if (OverlappingWeapon)
@@ -536,6 +561,24 @@ void ABlasterCharacter::MulticastElim_Implementation()
 {
 	bElimmed = true;
 	PlayElimMontage();
+
+	if (DissolveMaterialInstanceOne && DissolveMaterialInstanceTwo)
+	{
+		DynamicDissolveMaterialInstance.Add(UMaterialInstanceDynamic::Create(DissolveMaterialInstanceOne, this));
+		DynamicDissolveMaterialInstance.Add(UMaterialInstanceDynamic::Create(DissolveMaterialInstanceTwo, this));
+
+
+		GetMesh()->SetMaterial(0, DynamicDissolveMaterialInstance[0]);
+		GetMesh()->SetMaterial(1, DynamicDissolveMaterialInstance[1]);
+
+		for (auto Instance : DynamicDissolveMaterialInstance)
+		{
+			Instance->SetScalarParameterValue(TEXT("Dissolve"), -0.55f);
+			Instance->SetScalarParameterValue(TEXT("Glow"), 200.f);
+		}
+
+	}
+	StartDissolve();
 }
 
 void ABlasterCharacter::ElimTimerFinished()

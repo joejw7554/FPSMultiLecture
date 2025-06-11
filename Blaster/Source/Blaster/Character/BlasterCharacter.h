@@ -163,7 +163,29 @@ private:
 
 	///Disolve Effect////////////////////////////
 
+	UPROPERTY(VisibleAnywhere)
+	UTimelineComponent* DissolveTimeline;
+
 	FOnTimelineFloat DissolveTrack;
+
+	UPROPERTY(EditAnywhere)
+	UCurveFloat* DissovleCurve;
+
+	UFUNCTION()
+	void UpdateDissolveMaterial(float DissolveValue);
+	void StartDissolve();
+
+	//Dynamic Instance we can change at run time;
+	UPROPERTY(VisibleAnywhere, Category=Elim)
+	TArray<UMaterialInstanceDynamic*> DynamicDissolveMaterialInstance;
+
+	//Material Instance set on the blueprint, used with the dynamic material instance
+	UPROPERTY(EditAnywhere, Category=Elim)
+	UMaterialInstance* DissolveMaterialInstanceOne;
+
+	//Material Instance set on the blueprint, used with the dynamic material instance
+	UPROPERTY(EditAnywhere, Category = Elim)
+	UMaterialInstance* DissolveMaterialInstanceTwo;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
