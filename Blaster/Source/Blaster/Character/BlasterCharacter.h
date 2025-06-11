@@ -212,4 +212,7 @@ public:
 	UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	bool ShouldRotateRootBone() const { return bRotateRootBone; }
 	bool IsElimmed() const { return bElimmed; }
+	float GetHealth() const { return Health; }
+	float GetMaxHealth() const { return MaxHealth; }
+
 };
