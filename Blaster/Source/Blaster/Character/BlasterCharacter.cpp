@@ -553,6 +553,11 @@ void ABlasterCharacter::PlayElimMontage()
 
 void ABlasterCharacter::Elim()
 {
+	if (Combat && Combat->EquippedWeapon)
+	{
+		Combat->EquippedWeapon->Dropped();
+	}
+
 	MulticastElim();
 	GetWorldTimerManager().SetTimer(ElimTimer, this, &ABlasterCharacter::ElimTimerFinished, ElimDelay);
 }
@@ -562,6 +567,7 @@ void ABlasterCharacter::MulticastElim_Implementation()
 	bElimmed = true;
 	PlayElimMontage();
 
+	//Start Dissovle Effect
 	if (DissolveMaterialInstanceOne && DissolveMaterialInstanceTwo)
 	{
 		DynamicDissolveMaterialInstance.Add(UMaterialInstanceDynamic::Create(DissolveMaterialInstanceOne, this));
@@ -576,9 +582,24 @@ void ABlasterCharacter::MulticastElim_Implementation()
 			Instance->SetScalarParameterValue(TEXT("Dissolve"), -0.55f);
 			Instance->SetScalarParameterValue(TEXT("Glow"), 200.f);
 		}
-
 	}
 	StartDissolve();
+
+	//Disable Character Movement
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->StopMovementImmediately();
+	
+	if (BlasterPlayerController)
+	{
+		DisableInput(BlasterPlayerController);
+	}
+	
+
+	//Disable Collision
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
 }
 
 void ABlasterCharacter::ElimTimerFinished()
