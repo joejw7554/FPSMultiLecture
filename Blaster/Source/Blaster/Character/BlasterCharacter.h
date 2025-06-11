@@ -39,6 +39,9 @@ protected:
 
 	void UpdateHUDHealth();
 
+	//Poll for any relevant class and intialize our HUD
+	void PollInit();
+
 	void Movement(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void JumpButtonPressed(const FInputActionValue& Value);
@@ -199,6 +202,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class USoundCue* ElimBotSound;
+
+	class ABlasterPlayerState* BlasterPlayerState;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

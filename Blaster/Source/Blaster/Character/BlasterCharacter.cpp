@@ -15,7 +15,7 @@
 #include "Particles/ParticleSystemComponent.h"
 
 
-
+#include "Blaster/PlayerState/BlasterPlayerState.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Blaster.h"
@@ -136,6 +136,19 @@ void ABlasterCharacter::UpdateHUDHealth()
 		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
 	}
 
+}
+
+void ABlasterCharacter::PollInit()
+{
+	if (BlasterPlayerState == nullptr)
+	{
+		BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
+
+		if (BlasterPlayerState)
+		{
+			BlasterPlayerState->AddToScore(0.f);
+		}
+	}
 }
 
 void ABlasterCharacter::Movement(const FInputActionValue& Value)
@@ -490,6 +503,7 @@ void ABlasterCharacter::Tick(float DeltaTime)
 
 	}
 	HideCameraIfCharacterClose();
+	PollInit();
 }
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -603,12 +617,12 @@ void ABlasterCharacter::MulticastElim_Implementation()
 	//Disable Character Movement
 	GetCharacterMovement()->DisableMovement();
 	GetCharacterMovement()->StopMovementImmediately();
-	
+
 	if (BlasterPlayerController)
 	{
 		DisableInput(BlasterPlayerController);
 	}
-	
+
 
 	//Disable Collision
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -631,14 +645,14 @@ void ABlasterCharacter::MulticastElim_Implementation()
 
 void ABlasterCharacter::ElimTimerFinished()
 {
-	ABlasterGameMode* BlasterGameMode= GetWorld()->GetAuthGameMode<ABlasterGameMode>();
+	ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
 
 	if (BlasterGameMode)
 	{
 		BlasterGameMode->RequestRespawn(this, Controller);
 	}
 
-	
+
 }
 
 void ABlasterCharacter::PlayHitReactMontage()
