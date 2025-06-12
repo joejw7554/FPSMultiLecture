@@ -87,15 +87,18 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 {
 	bFireButtonPressed = bPressed;
 
-	if (bFireButtonPressed)
+	if (CanFire())
 	{
-		//FHitResult HitResult;
-		//TraceUnderCrosshairs(HitResult);
-		ServerFire(HitTarget);
-
-		if (EquippedWeapon)
+		if (bFireButtonPressed)
 		{
-			CrosshairShootingFactor = 1.f;
+			//FHitResult HitResult;
+			//TraceUnderCrosshairs(HitResult);
+			ServerFire(HitTarget);
+
+			if (EquippedWeapon)
+			{
+				CrosshairShootingFactor = 1.f;
+			}
 		}
 	}
 }
@@ -218,6 +221,13 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 			HUD->SetHUDPackage(HUDPackage);
 		}
 	}
+}
+
+bool UCombatComponent::CanFire()
+{
+	if (EquippedWeapon == nullptr) return false;
+
+	return !EquippedWeapon->IsEmpty();
 }
 
 void UCombatComponent::InterpFOV(float DeltaTime)

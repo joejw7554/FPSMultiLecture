@@ -111,5 +111,6 @@ public:
 	USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	float GetZoomedFOV() const { return ZoomedFOV; }
 	float GetZoomedInterpSpeed() const { return ZoomedInterpSpeed; }
+	bool IsEmpty();
 
 };

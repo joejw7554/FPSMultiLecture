@@ -45,6 +45,8 @@ protected:
 
 	void SetHUDCrosshairs(float DeltaTime);
 
+	bool CanFire();
+
 private:
 	UPROPERTY()
 	class ABlasterCharacter* Character;
