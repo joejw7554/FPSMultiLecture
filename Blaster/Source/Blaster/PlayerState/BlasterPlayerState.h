@@ -16,7 +16,7 @@ public:
 
 	UFUNCTION()
 	void OnRep_Defeats();
-
+	
 	void AddToScore(float ScoreAmount);
 	void AddToDefeats(int32 DefeatsAmount);
 
