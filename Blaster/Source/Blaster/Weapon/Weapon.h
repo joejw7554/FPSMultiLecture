@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include "WeaponTypes.h"
+
 #include "Weapon.generated.h"
 
 
@@ -81,7 +84,7 @@ private:
 	TSubclassOf<class ACasing> CasingClass;
 
 	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_Ammo)
-	int32 Ammo=30;
+	int32 Ammo = 30;
 
 	UFUNCTION()
 	void OnRep_Ammo();
@@ -90,7 +93,7 @@ private:
 
 
 	UPROPERTY(EditAnywhere)
-	int32 MagCapacity=5;
+	int32 MagCapacity = 30;
 
 	UPROPERTY(ReplicatedUsing = OnRep_WeaponState, VisibleAnywhere)
 	EWeaponState WeaponState;
@@ -104,6 +107,9 @@ private:
 	UPROPERTY()
 	class ABlasterPlayerController* BlasterOwnerController;
 
+	UPROPERTY(EditAnywhere)
+	EWeaponType WeaponType;
+
 
 public:
 	void SetWeaponState(EWeaponState State);
@@ -113,4 +119,5 @@ public:
 	float GetZoomedInterpSpeed() const { return ZoomedInterpSpeed; }
 	bool IsEmpty();
 
+	EWeaponType  GetWeaponType() const { return WeaponType; }
 };

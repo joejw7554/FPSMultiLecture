@@ -56,10 +56,8 @@ protected:
 	UFUNCTION()
 	void OnRep_CarriedAmmo();
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TMap<EWeaponType, int32> CarriedAmmoMap; //TMap Type Cannot be replicated
-	
-
 private:
 	UPROPERTY()
 	class ABlasterCharacter* Character;
