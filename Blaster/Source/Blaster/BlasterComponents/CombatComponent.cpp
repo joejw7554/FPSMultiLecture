@@ -27,6 +27,8 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
 	DOREPLIFETIME(UCombatComponent, bAiming);
+	DOREPLIFETIME_CONDITION(UCombatComponent, CarriedAmmo, COND_OwnerOnly);
+
 }
 
 void UCombatComponent::BeginPlay()
@@ -228,6 +230,12 @@ bool UCombatComponent::CanFire()
 	if (EquippedWeapon == nullptr) return false;
 
 	return !EquippedWeapon->IsEmpty();
+}
+
+void UCombatComponent::OnRep_CarriedAmmo()
+{
+
+
 }
 
 void UCombatComponent::InterpFOV(float DeltaTime)

@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 
 #include "Blaster/HUD/BlasterHUD.h"
+#include "Blaster/Weapon/WeaponTypes.h"
 
 #include "CombatComponent.generated.h"
 
@@ -46,6 +47,18 @@ protected:
 	void SetHUDCrosshairs(float DeltaTime);
 
 	bool CanFire();
+
+
+	///Carried ammo for the currently Equipped weapon
+	UPROPERTY(ReplicatedUsing= OnRep_CarriedAmmo)
+	int32 CarriedAmmo;
+
+	UFUNCTION()
+	void OnRep_CarriedAmmo();
+
+	UPROPERTY()
+	TMap<EWeaponType, int32> CarriedAmmoMap; //TMap Type Cannot be replicated
+	
 
 private:
 	UPROPERTY()
