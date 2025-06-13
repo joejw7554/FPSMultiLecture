@@ -18,6 +18,7 @@
 #include "Blaster/PlayerState/BlasterPlayerState.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Weapon/Weapon.h"
+#include "Blaster/Weapon//WeaponTypes.h"
 #include "Blaster/Blaster.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
@@ -262,6 +263,14 @@ void ABlasterCharacter::FireButtonReleased(const FInputActionValue& Value)
 	if (Combat)
 	{
 		Combat->FireButtonPressed(false);
+	}
+}
+
+void ABlasterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
+{
+	if (Combat)
+	{
+		Combat->Reload();
 	}
 }
 
@@ -540,6 +549,9 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 		if (FireAction)
 			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ABlasterCharacter::FireButtonReleased);
+
+		if (ReloadAction)
+			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Completed, this, &ABlasterCharacter::ReloadButtonPressed);
 	}
 
 }
@@ -565,12 +577,31 @@ void ABlasterCharacter::PostInitializeComponents()
 void ABlasterCharacter::PlayFireMontage(bool bAiming)
 {
 	if (Combat == nullptr || Combat->EquippedWeapon == nullptr) return;
+
+	if (FireWeaponMontage)
 	{
 		FName SectionName;
 		SectionName = bAiming ? FName("RifleAim") : FName("RifleHip");
 		PlayAnimMontage(FireWeaponMontage, 1.f, SectionName);
 	}
+}
 
+void ABlasterCharacter::PlayReloadMontage()
+{
+	if (Combat == nullptr || Combat->EquippedWeapon == nullptr) return;
+
+	if (ReloadMontage)
+	{
+		FName SectionName;
+		switch (Combat->EquippedWeapon->GetWeaponType())
+		{
+		case EWeaponType::EWT_AssaultRifle:
+			SectionName = FName("Rifle");
+				break;
+		}
+
+		PlayAnimMontage(ReloadMontage, 1.f, SectionName);
+	}
 }
 
 void ABlasterCharacter::PlayElimMontage()

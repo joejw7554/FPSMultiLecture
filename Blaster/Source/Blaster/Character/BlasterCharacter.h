@@ -22,7 +22,7 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	void PlayFireMontage(bool bAiming);
-
+	void PlayReloadMontage();
 	void PlayElimMontage();
 
 	void Elim();
@@ -58,6 +58,8 @@ protected:
 
 	void FireButtonPressed(const FInputActionValue& Value);
 	void FireButtonReleased(const FInputActionValue& Value);
+
+	void ReloadButtonPressed(const FInputActionValue& Value);
 
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
@@ -109,6 +111,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* FireAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* ReloadAction;
+
+
 	////////////////////Components
 	UPROPERTY(VisibleAnywhere)
 	class UCombatComponent* Combat;
@@ -121,14 +127,20 @@ private:
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
 
+
+	//////Animation Montages
 	UPROPERTY(EditAnywhere, Category=Combat)
 	class UAnimMontage* FireWeaponMontage;
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ReloadMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* HitReactMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* ElimMontage;
+
 
 
 	void HideCameraIfCharacterClose();
