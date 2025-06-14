@@ -493,6 +493,13 @@ FVector ABlasterCharacter::GetHitTarget() const
 	return Combat->HitTarget;
 }
 
+ECombateState ABlasterCharacter::GetCombatState() const
+{
+	if (Combat == nullptr) return ECombateState::ECS_MAX;
+
+	return Combat->CombatState;
+}
+
 
 void ABlasterCharacter::Tick(float DeltaTime)
 {

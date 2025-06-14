@@ -7,6 +7,7 @@
 
 #include "Blaster/Interfaces/InteractWithCrosshairsInterface.h"
 #include "Blaster/BlasterTypes/TurningInPlace.h"
+#include "Blaster/BlasterTypes/CombatState.h"
 #include "BlasterCharacter.generated.h"
 
 UCLASS()
@@ -116,7 +117,7 @@ private:
 
 
 	////////////////////Components
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
 	class UCombatComponent* Combat;
 
 	float AO_Yaw;
@@ -233,5 +234,6 @@ public:
 	bool IsElimmed() const { return bElimmed; }
 	float GetHealth() const { return Health; }
 	float GetMaxHealth() const { return MaxHealth; }
+	ECombateState GetCombatState() const;
 
 };

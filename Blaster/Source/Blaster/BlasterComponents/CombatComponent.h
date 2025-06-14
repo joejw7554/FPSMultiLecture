@@ -5,6 +5,7 @@
 
 #include "Blaster/HUD/BlasterHUD.h"
 #include "Blaster/Weapon/WeaponTypes.h"
+#include "Blaster/BlasterTypes/CombatState.h"
 
 #include "CombatComponent.generated.h"
 
@@ -23,6 +24,8 @@ public:
 
 	void EquipWeapon(class AWeapon* WeaponToEquip);
 	void Reload();
+	UFUNCTION(BlueprintCallable)
+	void FinishReloading();
 protected:
 	virtual void BeginPlay() override;
 	void SetAiming(bool bIsAiming);
@@ -46,15 +49,17 @@ protected:
 
 	void SetHUDCrosshairs(float DeltaTime);
 
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server, Reliable)
 	void ServerReload();
+
+	void HandleReload();
 
 
 	bool CanFire();
 
 
 	///Carried ammo for the currently Equipped weapon
-	UPROPERTY(ReplicatedUsing= OnRep_CarriedAmmo)
+	UPROPERTY(ReplicatedUsing = OnRep_CarriedAmmo)
 	int32 CarriedAmmo;
 
 	UFUNCTION()
@@ -62,6 +67,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<EWeaponType, int32> CarriedAmmoMap; //TMap Type Cannot be replicated
+
+	UPROPERTY(ReplicatedUsing = OnRep_CombatState)
+	ECombateState CombatState = ECombateState::ECS_Unoccupied;
+
+	UFUNCTION()
+	void OnRep_CombatState();
 private:
 	UPROPERTY()
 	class ABlasterCharacter* Character;
@@ -104,7 +115,7 @@ private:
 	//FOV when not aiming set to the camera's base FOV in BeginPlay
 	float DefaultFOV;
 
-	UPROPERTY(EditAnywhere, Category=Combat)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	float ZoomedFOV = 30.f;
 
 	float CurrentFOV;
