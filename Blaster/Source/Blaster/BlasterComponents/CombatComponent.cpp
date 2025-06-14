@@ -116,7 +116,7 @@ void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& T
 {
 	if (EquippedWeapon == nullptr) return;
 
-	if (Character)
+	if (Character && CombatState==ECombateState::ECS_Unoccupied)
 	{
 		Character->PlayFireMontage(bAiming);
 		EquippedWeapon->Fire(TraceHitTarget);
@@ -235,7 +235,7 @@ bool UCombatComponent::CanFire()
 {
 	if (EquippedWeapon == nullptr) return false;
 
-	return !EquippedWeapon->IsEmpty();
+	return !EquippedWeapon->IsEmpty() && CombatState == ECombateState::ECS_Unoccupied;
 }
 
 void UCombatComponent::OnRep_CarriedAmmo()
@@ -306,7 +306,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 	EquippedWeapon->SetOwner(Character);
 	EquippedWeapon->SetHUDAmmo();
 
-	if (CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()) )
+	if (CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
 	{
 		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
 	}
@@ -323,7 +323,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 
 void UCombatComponent::Reload()
 {
-	if (CarriedAmmo > 0 && CombatState!=ECombateState::ECS_Reloading)
+	if (CarriedAmmo > 0 && CombatState != ECombateState::ECS_Reloading)
 	{
 		ServerReload();
 	}
@@ -335,6 +335,10 @@ void UCombatComponent::FinishReloading()
 	if (Character->HasAuthority())
 	{
 		CombatState = ECombateState::ECS_Unoccupied;
+	}
+
+	if (bFireButtonPressed)
+	{
 	}
 }
 
@@ -357,6 +361,13 @@ void UCombatComponent::OnRep_CombatState()
 	{
 	case ECombateState::ECS_Reloading:
 		HandleReload();
+		break;
+
+	case ECombateState::ECS_Unoccupied:
+		if (bFireButtonPressed)
+		{
+			FireButtonPressed(bFireButtonPressed);
+		}
 		break;
 	}
 
