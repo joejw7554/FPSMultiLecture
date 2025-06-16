@@ -68,7 +68,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 
 		if (BlasterCharacter->IsLocallyControlled())
 		{
-			bLocallControlled = true;
+			bLocallyControlled = true;
 			FTransform RightHandTransform = BlasterCharacter->GetMesh()->GetSocketTransform(FName("hand_r"));
 			FRotator LookAtRotaiton = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - BlasterCharacter->GetHitTarget()));
 			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotaiton, DeltaTime, 30.f);
@@ -77,4 +77,6 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	}
 
 	bUseFABRIK = BlasterCharacter->GetCombatState() != ECombateState::ECS_Reloading;
+	bUseAimOffsets = BlasterCharacter->GetCombatState() != ECombateState::ECS_Reloading;
+	bTransformRightHand = BlasterCharacter->GetCombatState() != ECombateState::ECS_Reloading;
 }

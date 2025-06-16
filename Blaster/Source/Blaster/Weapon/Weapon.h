@@ -57,7 +57,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float ZoomedInterpSpeed = 30.f;
 
-
+	UPROPERTY(EditAnywhere)
+	class USoundCue* EquipSound;
 
 protected:
 	virtual void BeginPlay() override;
