@@ -32,6 +32,7 @@ public:
 	virtual void Fire(const FVector& HitTarget);
 	void Dropped();
 	void SetHUDAmmo();
+	void AddAmmo(int32 AmmoToAdd);
 
 	////////////////////////Textures for the weapon crosshairs
 	UPROPERTY(EditAnywhere, Category = Crosshairs)
@@ -120,4 +121,6 @@ public:
 	bool IsEmpty();
 
 	EWeaponType  GetWeaponType() const { return WeaponType; }
+	int32 GetAmmo()const { return Ammo; }
+	int32 GetMagCapacity()const { return MagCapacity; }
 };
