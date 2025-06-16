@@ -111,6 +111,11 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 			}
 		}
 	}
+	else
+	{
+		Reload();
+	}
+	
 }
 
 void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
@@ -329,6 +334,11 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 
 	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 	Character->bUseControllerRotationYaw = true;
+
+	if(EquippedWeapon->IsEmpty())
+	{
+		Reload();
+	}
 }
 
 void UCombatComponent::Reload()
