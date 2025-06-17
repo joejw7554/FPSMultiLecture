@@ -17,12 +17,13 @@ public:
 	virtual void RequestRespawn(ABlasterCharacter* ElimmedCharacter, AController* ElimmedController);
 	
 	UPROPERTY(EditDefaultsOnly)
-	float WarmupTime = 15.f;
+	float WarmupTime = 10.f;
 
 	float LevelStartingTime = 0.f;
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnMatchStateSet() override;
 
 private:
 	float CountdownTime = 0.f;
