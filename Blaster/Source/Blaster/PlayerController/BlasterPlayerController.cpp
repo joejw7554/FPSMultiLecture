@@ -2,6 +2,7 @@
 
 #include "Blaster/HUD/BlasterHUD.h"
 #include "Blaster/HUD/CharacterOverlay.h"
+#include "Blaster/HUD/Announcement.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
 
@@ -14,6 +15,10 @@ void ABlasterPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	BlasterHUD = Cast<ABlasterHUD>(GetHUD());
+	if (BlasterHUD)
+	{
+		BlasterHUD->AddAnnouncement();
+	}
 
 }
 
@@ -121,26 +126,29 @@ void ABlasterPlayerController::ReceivedPlayer()
 void ABlasterPlayerController::OnMatchStateSet(FName State)
 {
 	MatchState = State;
-
-	if (MatchState == MatchState::InProgress)
-	{
-		if (BlasterHUD)
-		{
-			BlasterHUD->AddCharacterOverlay();
-		}
-	}
+	HandleMatchHasStarted();
 }
 
 void ABlasterPlayerController::OnRep_MatchState()
+{
+	HandleMatchHasStarted();
+}
+
+void ABlasterPlayerController::HandleMatchHasStarted()
 {
 	if (MatchState == MatchState::InProgress)
 	{
 		if (BlasterHUD)
 		{
 			BlasterHUD->AddCharacterOverlay();
+			if (BlasterHUD->Announcement)
+			{
+				BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 }
+
 
 
 void ABlasterPlayerController::SetHUDHealth(float Health, float MaxHealth)

@@ -25,6 +25,8 @@ public:
 	virtual void ReceivedPlayer() override; //syc with server clock ASAP
 	void OnMatchStateSet(FName State);
 
+	void HandleMatchHasStarted();
+
 protected:
 	virtual void BeginPlay() override;
 	void SetHUDTime();
