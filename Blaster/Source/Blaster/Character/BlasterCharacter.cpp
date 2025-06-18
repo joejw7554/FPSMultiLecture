@@ -125,8 +125,23 @@ void ABlasterCharacter::BeginPlay()
 			InputSubsystem->AddMappingContext(BlasterCharacterContext, 0);
 		}
 	}
+}
 
+void ABlasterCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
 
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		UEnhancedInputLocalPlayerSubsystem* InputSubsystem =
+			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+
+		if (InputSubsystem)
+		{
+			InputSubsystem->AddMappingContext(BlasterCharacterContext, 0);
+		}
+	}
 }
 
 void ABlasterCharacter::UpdateHUDHealth()
