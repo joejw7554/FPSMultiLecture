@@ -171,30 +171,58 @@ void ABlasterPlayerController::ReceivedPlayer()
 void ABlasterPlayerController::OnMatchStateSet(FName State)
 {
 	MatchState = State;
-	HandleMatchHasStarted();
+
+	if (MatchState == MatchState::InProgress)
+	{
+		HandleMatchHasStarted();
+
+	}
+	else if (MatchState == MatchState::Cooldown)
+	{
+		HandleCooldown();
+	}
 }
 
 void ABlasterPlayerController::OnRep_MatchState()
 {
-	HandleMatchHasStarted();
+	if (MatchState == MatchState::InProgress)
+	{
+		HandleMatchHasStarted();
+
+	}
+	else if (MatchState == MatchState::Cooldown)
+	{
+		HandleCooldown();
+	}
 }
 
 void ABlasterPlayerController::HandleMatchHasStarted()
 {
-	if (MatchState == MatchState::InProgress)
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (BlasterHUD)
 	{
-		if (BlasterHUD)
+		BlasterHUD->AddCharacterOverlay();
+		if (BlasterHUD->Announcement)
 		{
-			BlasterHUD->AddCharacterOverlay();
-			if (BlasterHUD->Announcement)
-			{
-				BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Hidden);
-			}
+			BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+
 }
 
-
+void ABlasterPlayerController::HandleCooldown()
+{
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if (BlasterHUD)
+	{
+		BlasterHUD->CharacterOverlay->RemoveFromParent();
+		if (BlasterHUD->Announcement)
+		{
+			BlasterHUD->Announcement->SetVisibility(ESlateVisibility::Visible);
+		}
+	}
+	
+}
 
 void ABlasterPlayerController::SetHUDHealth(float Health, float MaxHealth)
 {
