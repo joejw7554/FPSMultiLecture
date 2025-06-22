@@ -39,4 +39,7 @@ protected:
 
 private:
 	float CountdownTime = 0.f;
+
+public:
+	float GetCountdownTime() const { return CountdownTime; }
 };
