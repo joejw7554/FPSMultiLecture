@@ -35,9 +35,16 @@ public:
 	virtual void OnRep_ReplicatedMovement() override;
 
 
+	UPROPERTY(Replicated)
+	bool bDisableGameplay = false;
+
+
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void PossessedBy(AController* NewController) override;
+
+	void RotateInPlace(float DeltaTime);
 
 	void UpdateHUDHealth();
 
@@ -73,13 +80,13 @@ protected:
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 private:
-	UPROPERTY(VisibleAnywhere, Category=Camera)
+	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true") )
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UWidgetComponent* OverheadWidget;
 
 	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon, VisibleAnywhere)
@@ -89,20 +96,20 @@ private:
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
 	//////////////////Input//////////////////////////
-	UPROPERTY(EditDefaultsOnly, Category= Input)
+	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputMappingContext* BlasterCharacterContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* MoveAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	 UInputAction* LookAction;
+	UInputAction* LookAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	 UInputAction* JumpAction;
+	UInputAction* JumpAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
-	 UInputAction* EquipAction;
+	UInputAction* EquipAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* CrouchAction;
@@ -118,7 +125,7 @@ private:
 
 
 	////////////////////Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCombatComponent* Combat;
 
 	float AO_Yaw;
@@ -131,7 +138,7 @@ private:
 
 
 	//////Animation Montages
-	UPROPERTY(EditAnywhere, Category=Combat)
+	UPROPERTY(EditAnywhere, Category = Combat)
 	class UAnimMontage* FireWeaponMontage;
 
 	UPROPERTY(EditAnywhere, Category = Combat)
@@ -160,10 +167,10 @@ private:
 
 	///////PlayerHealth////////////////////////////
 
-	UPROPERTY(EditAnywhere, Category= "Player Stats")
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	float MaxHealth = 100.f;
 
-	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere, Category = "Player Stats" )
+	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere, Category = "Player Stats")
 	float Health = 100.f;
 
 	UFUNCTION()
@@ -196,11 +203,11 @@ private:
 	void StartDissolve();
 
 	//Dynamic Instance we can change at run time;
-	UPROPERTY(VisibleAnywhere, Category=Elim)
+	UPROPERTY(VisibleAnywhere, Category = Elim)
 	TArray<UMaterialInstanceDynamic*> DynamicDissolveMaterialInstance;
 
 	//Material Instance set on the blueprint, used with the dynamic material instance
-	UPROPERTY(EditAnywhere, Category=Elim)
+	UPROPERTY(EditAnywhere, Category = Elim)
 	UMaterialInstance* DissolveMaterialInstanceOne;
 
 	//Material Instance set on the blueprint, used with the dynamic material instance
@@ -236,5 +243,7 @@ public:
 	float GetHealth() const { return Health; }
 	float GetMaxHealth() const { return MaxHealth; }
 	ECombateState GetCombatState() const;
+	UCombatComponent* GetCombat() const { return Combat; }
+	bool GetDisableGamepaly() const { return bDisableGameplay; }
 
 };

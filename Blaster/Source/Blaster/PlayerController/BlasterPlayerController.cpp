@@ -5,6 +5,7 @@
 #include "Blaster/HUD/Announcement.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
+#include "Blaster/BlasterComponents/CombatComponent.h"
 
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -120,10 +121,10 @@ void ABlasterPlayerController::ClientJoinMidGame_Implementation(FName StateOfMat
 	LevelStartingTime = StartingTime;
 	OnMatchStateSet(MatchState);
 
-	if (BlasterHUD && MatchState == MatchState::WaitingToStart)
-	{
-		BlasterHUD->AddAnnouncement();
-	}
+	//if (BlasterHUD && MatchState == MatchState::WaitingToStart)
+	//{
+	//	BlasterHUD->AddAnnouncement();
+	//}
 }
 
 void ABlasterPlayerController::ServerCheckMatchState_Implementation()
@@ -139,10 +140,10 @@ void ABlasterPlayerController::ServerCheckMatchState_Implementation()
 		MatchState = GameMode->GetMatchState();
 		ClientJoinMidGame(MatchState, WarmupTime, MatchTime, CooldownTime, LevelStartingTime);
 
-		/*if(BlasterHUD && MatchState==MatchState::WaitingToStart)
+		if(BlasterHUD && MatchState==MatchState::WaitingToStart)
 		{
 			BlasterHUD->AddAnnouncement();
-		}*/
+		}
 	}
 
 }
@@ -240,7 +241,13 @@ void ABlasterPlayerController::HandleCooldown()
 			BlasterHUD->Announcement->InfoText->SetText(FText());
 		}
 	}
-	
+
+	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(GetPawn());
+	if (BlasterCharacter && BlasterCharacter->GetCombat())
+	{
+		BlasterCharacter->bDisableGameplay = true;
+		BlasterCharacter->GetCombat()->FireButtonPressed(false);
+	}
 }
 
 void ABlasterPlayerController::SetHUDHealth(float Health, float MaxHealth)
