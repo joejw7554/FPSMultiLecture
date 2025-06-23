@@ -29,6 +29,12 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* ImpactParticles;
+
+	UPROPERTY(EditAnywhere)
+	class USoundCue* ImpactSound;
+
 private:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* Tracer;
@@ -36,11 +42,6 @@ private:
 	UPROPERTY()
 	class UParticleSystemComponent* TracerComponent;
 
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* ImpactParticles;
-
-	UPROPERTY(EditAnywhere)
-	class USoundCue* ImpactSound;
 
 
 
