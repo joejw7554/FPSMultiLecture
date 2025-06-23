@@ -25,7 +25,6 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
 	CollisionBox->SetBoxExtent(FVector(5.f, 2.5f, 2.5f));
-	CollisionBox->SetLineThickness(2.f);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComp");
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;

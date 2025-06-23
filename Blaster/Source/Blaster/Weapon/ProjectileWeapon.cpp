@@ -4,6 +4,11 @@
 
 void AProjectileWeapon::Fire(const FVector& HitTarget)
 {
+	/*if (!bCanFire) return;
+	bCanFire = false;
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &AProjectileWeapon::SetFireTrue, FireDelay, false, -1.f);*/
+
 	Super::Fire(HitTarget);
 
 	if (!HasAuthority()) return;
@@ -24,4 +29,10 @@ void AProjectileWeapon::Fire(const FVector& HitTarget)
 
 		GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SocketTransform.GetLocation(), TargetRotation, SpawnParams);
 	}
+}
+
+void AProjectileWeapon::SetFireTrue()
+{
+	bCanFire = true;
+	UE_LOG(LogTemp, Warning, TEXT("SetFireTrue Called"));
 }
