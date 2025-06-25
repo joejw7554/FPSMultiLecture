@@ -1,6 +1,6 @@
 #include "Projectile.h"
+
 #include "Components/BoxComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Particles/ParticleSystem.h"
@@ -26,10 +26,7 @@ AProjectile::AProjectile()
 
 	CollisionBox->SetBoxExtent(FVector(5.f, 2.5f, 2.5f));
 
-	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComp");
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
-	ProjectileMovementComponent->InitialSpeed = 15000.f;
-	ProjectileMovementComponent->MaxSpeed = 15000.f;
+
 }
 
 void AProjectile::BeginPlay()

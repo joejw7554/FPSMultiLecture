@@ -8,8 +8,9 @@
 #include "Sound/SoundCue.h"
 #include "Sound/SoundAttenuation.h"
 #include "Components/AudioComponent.h"
-
 #include "GameFramework/ProjectileMovementComponent.h"
+
+#include "RocketMovementComponent.h"
 
 
 AProjectileRocket::AProjectileRocket()
@@ -20,9 +21,13 @@ AProjectileRocket::AProjectileRocket()
 
 	CollisionBox->SetBoxExtent(FVector(15.f, 2.5f, 2.5f));
 
-	ProjectileMovementComponent->InitialSpeed = 2000.f;
-	ProjectileMovementComponent->MaxSpeed = 2000.f;
-	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
+
+	RocketMovementComponent = CreateDefaultSubobject<URocketMovementComponent>("RocketMovementComponent");
+	RocketMovementComponent->bRotationFollowsVelocity = true;
+	RocketMovementComponent->SetIsReplicated(true);
+	RocketMovementComponent->InitialSpeed = 2000.f;
+	RocketMovementComponent->MaxSpeed = 2000.f;
+	RocketMovementComponent->ProjectileGravityScale = 0.f;
 
 }
 
@@ -49,7 +54,10 @@ void AProjectileRocket::BeginPlay()
 
 void AProjectileRocket::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor == GetOwner()) return;
+	if (OtherActor == GetOwner())
+	{
+		return;
+	}
 
 	APawn* FiringPawn = GetInstigator();
 
