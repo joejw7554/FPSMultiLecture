@@ -49,10 +49,13 @@ void UCombatComponent::BeginPlay()
 
 	}
 
+	//TEST BULLET INITIALIZATION 
 	CarriedAmmoMap.Add(EWeaponType::EWT_Pistol, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_AssaultRifle, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_SubmachineGun, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_RocketLauncher, 20);
+	CarriedAmmoMap.Add(EWeaponType::EWT_Shotgun, 20);
+
 
 }
 
