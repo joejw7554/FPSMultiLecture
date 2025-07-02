@@ -675,7 +675,6 @@ void ABlasterCharacter::PlayReloadMontage()
 			SectionName = FName("Rifle"); //Need to be fixed later
 			break;
 
-
 		case EWeaponType::EWT_SubmachineGun:
 			SectionName = FName("Rifle");
 			break;
@@ -684,6 +683,9 @@ void ABlasterCharacter::PlayReloadMontage()
 			SectionName = FName("Rifle");
 			break;
 
+		case EWeaponType::EWT_SniperRifle:
+			SectionName = FName("Rifle");
+			break;
 		}
 
 		PlayAnimMontage(ReloadMontage, 1.f, SectionName);

@@ -55,6 +55,8 @@ void UCombatComponent::BeginPlay()
 	CarriedAmmoMap.Add(EWeaponType::EWT_SubmachineGun, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_RocketLauncher, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_Shotgun, 20);
+	CarriedAmmoMap.Add(EWeaponType::EWT_SniperRifle, 20);
+
 
 
 }
