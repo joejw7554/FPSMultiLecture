@@ -686,6 +686,10 @@ void ABlasterCharacter::PlayReloadMontage()
 		case EWeaponType::EWT_SniperRifle:
 			SectionName = FName("Rifle");
 			break;
+
+		case EWeaponType::EWT_GrenadeLauncher:
+			SectionName = FName("Rifle");
+			break;
 		}
 
 		PlayAnimMontage(ReloadMontage, 1.f, SectionName);
@@ -782,8 +786,6 @@ void ABlasterCharacter::ElimTimerFinished()
 	{
 		BlasterGameMode->RequestRespawn(this, Controller);
 	}
-
-
 }
 
 void ABlasterCharacter::PlayHitReactMontage()

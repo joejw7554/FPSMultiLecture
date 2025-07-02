@@ -56,9 +56,7 @@ void UCombatComponent::BeginPlay()
 	CarriedAmmoMap.Add(EWeaponType::EWT_RocketLauncher, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_Shotgun, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_SniperRifle, 20);
-
-
-
+	CarriedAmmoMap.Add(EWeaponType::EWT_GrenadeLauncher, 20);
 }
 
 void UCombatComponent::SetAiming(bool bIsAiming)
