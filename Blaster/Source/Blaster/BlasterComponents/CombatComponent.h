@@ -24,12 +24,20 @@ public:
 
 	void EquipWeapon(class AWeapon* WeaponToEquip);
 	void Reload();
+
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
 	void UpdateAmmoValues();
+	void UpdateShotgunAmmoValues();
 
 
 	void FireButtonPressed(bool bPressed);
+
+	UFUNCTION(BlueprintCallable)
+	void ShotgunShellReload();
+
+	void JumpToShotgunEnd();
+
 
 protected:
 	virtual void BeginPlay() override;

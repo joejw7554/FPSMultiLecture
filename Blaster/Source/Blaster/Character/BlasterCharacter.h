@@ -248,5 +248,6 @@ public:
 	ECombateState GetCombatState() const;
 	UCombatComponent* GetCombat() const { return Combat; }
 	bool GetDisableGamepaly() const { return bDisableGameplay; }
+	UAnimMontage* GetReloadMontage() const { return ReloadMontage; }
 
 };

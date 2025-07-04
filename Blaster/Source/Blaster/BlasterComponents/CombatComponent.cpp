@@ -13,6 +13,7 @@
 
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Character/BlasterCharacter.h"
+#include "Blaster/Character/BlasterAnimInstance.h"
 
 #define TRACE_LENGTH 800000
 
@@ -54,7 +55,7 @@ void UCombatComponent::BeginPlay()
 	CarriedAmmoMap.Add(EWeaponType::EWT_AssaultRifle, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_SubmachineGun, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_RocketLauncher, 20);
-	CarriedAmmoMap.Add(EWeaponType::EWT_Shotgun, 20);
+	CarriedAmmoMap.Add(EWeaponType::EWT_Shotgun, 2);
 	CarriedAmmoMap.Add(EWeaponType::EWT_SniperRifle, 20);
 	CarriedAmmoMap.Add(EWeaponType::EWT_GrenadeLauncher, 20);
 }
@@ -130,8 +131,18 @@ void UCombatComponent::FireButtonPressed(bool bPressed)
 	{
 		Reload();
 	}
-	
+
 }
+
+void UCombatComponent::ShotgunShellReload()
+{
+	if (Character && Character->HasAuthority())
+	{
+		UpdateShotgunAmmoValues();
+	}
+}
+
+
 
 void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
@@ -141,6 +152,15 @@ void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& Trac
 void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if (EquippedWeapon == nullptr) return;
+
+	if (Character && CombatState == ECombateState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
+	{
+		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire(TraceHitTarget);
+		CombatState = ECombateState::ECS_Unoccupied;
+		return;
+	}
+
 
 	if (Character && CombatState == ECombateState::ECS_Unoccupied)
 	{
@@ -261,6 +281,8 @@ bool UCombatComponent::CanFire()
 {
 	if (EquippedWeapon == nullptr) return false;
 
+	if (!EquippedWeapon->IsEmpty() && CombatState == ECombateState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun) return true;
+
 	return !EquippedWeapon->IsEmpty() && CombatState == ECombateState::ECS_Unoccupied;
 }
 
@@ -270,6 +292,13 @@ void UCombatComponent::OnRep_CarriedAmmo()
 	if (Controller)
 	{
 		Controller->SetHUDCarriedAmmo(CarriedAmmo);
+	}
+
+	bool bJumpToShotgunEnd = CombatState == ECombateState::ECS_Reloading && EquippedWeapon != nullptr && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun && CarriedAmmo == 0;
+
+	if (bJumpToShotgunEnd)
+	{
+		JumpToShotgunEnd();
 	}
 }
 
@@ -350,7 +379,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 	Character->bUseControllerRotationYaw = true;
 
-	if(EquippedWeapon->IsEmpty())
+	if (EquippedWeapon->IsEmpty())
 	{
 		Reload();
 	}
@@ -381,7 +410,7 @@ void UCombatComponent::UpdateAmmoValues()
 
 	int32 ReloadAmount = AmountToReload();
 
-	if (CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	if (CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType())) //check if the character has the ammo type that matches with the current equipped weapon 
 	{
 		CarriedAmmoMap[EquippedWeapon->GetWeaponType()] -= ReloadAmount;
 		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
@@ -394,6 +423,39 @@ void UCombatComponent::UpdateAmmoValues()
 	}
 
 	EquippedWeapon->AddAmmo(ReloadAmount);
+}
+
+void UCombatComponent::UpdateShotgunAmmoValues()
+{
+	if (Character == nullptr || EquippedWeapon == nullptr) return;
+
+	if (CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	{
+		CarriedAmmoMap[EquippedWeapon->GetWeaponType()] -= 1;
+		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
+	}
+
+	Controller = Controller == nullptr ? Cast<ABlasterPlayerController>(Character->Controller) : Controller;
+	if (Controller)
+	{
+		Controller->SetHUDCarriedAmmo(CarriedAmmo);
+	}
+
+	EquippedWeapon->AddAmmo(1);
+
+	if (EquippedWeapon->IsFull() || CarriedAmmo==0) //check if the shotgun has Full Ammo
+	{
+		JumpToShotgunEnd();
+	}
+}
+
+void UCombatComponent::JumpToShotgunEnd()
+{
+	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	if (AnimInstance && Character->GetReloadMontage())
+	{
+		AnimInstance->Montage_JumpToSection("ShotgunEnd");
+	}
 }
 
 void UCombatComponent::HandleReload()

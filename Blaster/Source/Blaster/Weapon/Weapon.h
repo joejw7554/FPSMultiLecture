@@ -119,6 +119,7 @@ public:
 	float GetZoomedFOV() const { return ZoomedFOV; }
 	float GetZoomedInterpSpeed() const { return ZoomedInterpSpeed; }
 	bool IsEmpty();
+	bool IsFull();
 
 	EWeaponType  GetWeaponType() const { return WeaponType; }
 	int32 GetAmmo()const { return Ammo; }
