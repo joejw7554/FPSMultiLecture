@@ -303,7 +303,7 @@ void UCombatComponent::ThrowGrenade()
 void UCombatComponent::ServerThrowGrenade_Implementation()
 {
 	CombatState = ECombateState::ECS_ThrowingGrenade;
-	
+
 	if (Character)
 	{
 		Character->PlayThrowGrenadeMontage();
@@ -468,7 +468,7 @@ void UCombatComponent::UpdateShotgunAmmoValues()
 
 	EquippedWeapon->AddAmmo(1);
 
-	if (EquippedWeapon->IsFull() || CarriedAmmo==0) //check if the shotgun has Full Ammo
+	if (EquippedWeapon->IsFull() || CarriedAmmo == 0) //check if the shotgun has Full Ammo
 	{
 		JumpToShotgunEnd();
 	}
