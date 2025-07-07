@@ -56,8 +56,13 @@ ABlasterCharacter::ABlasterCharacter()
 	Combat = CreateDefaultSubobject<UCombatComponent>("Combat");
 	Combat->SetIsReplicated(true);
 
-
 	DissolveTimeline = CreateDefaultSubobject<UTimelineComponent>("DissolveTimelineComponent");
+
+	GrenadeMesh = CreateDefaultSubobject<USkeletalMeshComponent>("GrenadeMesh");
+	GrenadeMesh->SetRelativeScale3D(FVector(1.5f, 1.5f, 1.5f));
+	GrenadeMesh->SetupAttachment(GetMesh(), FName("GrenadeSocket"));
+	GrenadeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrenadeMesh->SetVisibility(false);
 
 	//CDO
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'");
@@ -67,6 +72,14 @@ ABlasterCharacter::ABlasterCharacter()
 	}
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90.f));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0.f));
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> grenadeMesh(L"/Script/Engine.SkeletalMesh'/Game/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67.SK_G67'");
+	if (grenadeMesh.Succeeded())
+	{
+		GrenadeMesh->SetSkeletalMesh(grenadeMesh.Object);
+	}
+
+
 
 	//Check this frequently
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
