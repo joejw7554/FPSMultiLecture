@@ -38,6 +38,9 @@ public:
 
 	void JumpToShotgunEnd();
 
+	UFUNCTION(BlueprintCallable)
+	void ThrowGrenadeFinished();
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -68,8 +71,12 @@ protected:
 
 	int32 AmountToReload();
 
-
 	bool CanFire();
+
+	void ThrowGrenade();
+
+	UFUNCTION(Server,Reliable)
+	void ServerThrowGrenade();
 
 
 	///Carried ammo for the currently Equipped weapon

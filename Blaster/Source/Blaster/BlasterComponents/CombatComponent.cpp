@@ -274,9 +274,6 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 }
 
 
-
-
-
 bool UCombatComponent::CanFire()
 {
 	if (EquippedWeapon == nullptr) return false;
@@ -284,6 +281,33 @@ bool UCombatComponent::CanFire()
 	if (!EquippedWeapon->IsEmpty() && CombatState == ECombateState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun) return true;
 
 	return !EquippedWeapon->IsEmpty() && CombatState == ECombateState::ECS_Unoccupied;
+}
+
+void UCombatComponent::ThrowGrenade()
+{
+	if (CombatState != ECombateState::ECS_Unoccupied) return;
+
+	CombatState = ECombateState::ECS_ThrowingGrenade;
+
+	if (Character)
+	{
+		Character->PlayThrowGrenadeMontage();
+	}
+
+	if (Character && !Character->HasAuthority())
+	{
+		ServerThrowGrenade();
+	}
+}
+
+void UCombatComponent::ServerThrowGrenade_Implementation()
+{
+	CombatState = ECombateState::ECS_ThrowingGrenade;
+	
+	if (Character)
+	{
+		Character->PlayThrowGrenadeMontage();
+	}
 }
 
 void UCombatComponent::OnRep_CarriedAmmo()
@@ -343,6 +367,7 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 {
 	if (Character == nullptr || WeaponToEquip == nullptr) return;
+	if (CombatState != ECombateState::ECS_Unoccupied) return;
 
 	if (EquippedWeapon)
 	{
@@ -387,7 +412,7 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)//Sever
 
 void UCombatComponent::Reload()
 {
-	if (CarriedAmmo > 0 && CombatState != ECombateState::ECS_Reloading)
+	if (CarriedAmmo > 0 && CombatState == ECombateState::ECS_Unoccupied && EquippedWeapon && !EquippedWeapon->IsFull())
 	{
 		ServerReload();
 	}
@@ -458,6 +483,11 @@ void UCombatComponent::JumpToShotgunEnd()
 	}
 }
 
+void UCombatComponent::ThrowGrenadeFinished()
+{
+	CombatState = ECombateState::ECS_Unoccupied;
+}
+
 void UCombatComponent::HandleReload()
 {
 	Character->PlayReloadMontage();
@@ -499,6 +529,13 @@ void UCombatComponent::OnRep_CombatState()
 		if (bFireButtonPressed)
 		{
 			FireButtonPressed(bFireButtonPressed);
+		}
+		break;
+
+	case ECombateState::ECS_ThrowingGrenade:
+		if (Character && !Character->IsLocallyControlled())
+		{
+			Character->PlayThrowGrenadeMontage();
 		}
 		break;
 	}

@@ -25,6 +25,7 @@ public:
 	void PlayFireMontage(bool bAiming);
 	void PlayReloadMontage();
 	void PlayElimMontage();
+	void PlayThrowGrenadeMontage();
 
 	void Elim();
 	UFUNCTION(NetMulticast, Reliable)
@@ -72,6 +73,7 @@ protected:
 	void FireButtonReleased(const FInputActionValue& Value);
 
 	void ReloadButtonPressed(const FInputActionValue& Value);
+	void GrenadeButtonPressed(const FInputActionValue& Value);
 
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
@@ -126,6 +128,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	UInputAction* ReloadAction;
 
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	UInputAction* GrenadeAction;
+
 
 	////////////////////Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -153,6 +158,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* ElimMontage;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ThrowGrenadeMontage;
 
 
 	void HideCameraIfCharacterClose();

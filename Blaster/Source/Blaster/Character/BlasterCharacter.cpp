@@ -322,6 +322,14 @@ void ABlasterCharacter::ReloadButtonPressed(const FInputActionValue& Value)
 	}
 }
 
+void ABlasterCharacter::GrenadeButtonPressed(const FInputActionValue& Value)
+{
+	if (Combat)
+	{
+		Combat->ThrowGrenade();
+	}
+}
+
 void ABlasterCharacter::AimOffset(float DeltaTime)
 {
 	if (Combat && Combat->EquippedWeapon == nullptr) return;
@@ -618,8 +626,10 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 		if (ReloadAction)
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Completed, this, &ABlasterCharacter::ReloadButtonPressed);
-	}
 
+		if (GrenadeAction)
+			EnhancedInputComponent->BindAction(GrenadeAction, ETriggerEvent::Completed, this, &ABlasterCharacter::GrenadeButtonPressed);
+	}
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -701,6 +711,14 @@ void ABlasterCharacter::PlayElimMontage()
 	if (ElimMontage)
 	{
 		PlayAnimMontage(ElimMontage);
+	}
+}
+
+void ABlasterCharacter::PlayThrowGrenadeMontage()
+{
+	if (ThrowGrenadeMontage)
+	{
+		PlayAnimMontage(ThrowGrenadeMontage);
 	}
 }
 
