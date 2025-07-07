@@ -260,5 +260,6 @@ public:
 	UCombatComponent* GetCombat() const { return Combat; }
 	bool GetDisableGamepaly() const { return bDisableGameplay; }
 	UAnimMontage* GetReloadMontage() const { return ReloadMontage; }
+	USkeletalMeshComponent* GetAttachedGrenade() const { return GrenadeMesh; }
 
 };

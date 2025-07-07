@@ -62,7 +62,6 @@ ABlasterCharacter::ABlasterCharacter()
 	GrenadeMesh->SetRelativeScale3D(FVector(1.5f, 1.5f, 1.5f));
 	GrenadeMesh->SetupAttachment(GetMesh(), FName("GrenadeSocket"));
 	GrenadeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GrenadeMesh->SetVisibility(false);
 
 	//CDO
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>mesh(L"/Script/Engine.SkeletalMesh'/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'");
@@ -132,6 +131,11 @@ void ABlasterCharacter::BeginPlay()
 	if (HasAuthority())
 	{
 		OnTakeAnyDamage.AddDynamic(this, &ABlasterCharacter::ReceiveDamage);
+	}
+
+	if (GrenadeMesh)
+	{
+		GrenadeMesh->SetVisibility(false);
 	}
 
 	/////////////Enhanced Input Process
