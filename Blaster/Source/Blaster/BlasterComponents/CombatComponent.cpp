@@ -40,6 +40,7 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(UCombatComponent, bAiming);
 	DOREPLIFETIME(UCombatComponent, CombatState);
 	DOREPLIFETIME_CONDITION(UCombatComponent, CarriedAmmo, COND_OwnerOnly);
+	DOREPLIFETIME(UCombatComponent, Grenades);
 
 }
 
@@ -284,6 +285,8 @@ bool UCombatComponent::CanFire()
 
 void UCombatComponent::ThrowGrenade()
 {
+	if (Grenades == 0) return;
+
 	if (CombatState != ECombateState::ECS_Unoccupied || EquippedWeapon == nullptr) return;
 
 	CombatState = ECombateState::ECS_ThrowingGrenade;
@@ -298,6 +301,30 @@ void UCombatComponent::ThrowGrenade()
 	{
 		ServerThrowGrenade();
 	}
+
+	if (Character && Character->HasAuthority())
+	{
+		Grenades = FMath::Clamp(Grenades - 1, 0, MaxGrenades);
+		UpdateHUDGrenades();
+	}
+}
+
+void UCombatComponent::ServerThrowGrenade_Implementation()
+{
+	if (Grenades == 0) return;
+
+
+	CombatState = ECombateState::ECS_ThrowingGrenade;
+
+	if (Character)
+	{
+		Character->PlayThrowGrenadeMontage();
+		AttachActorToLeftHand(EquippedWeapon);
+		ShowAttachedGrenade(true);
+
+	}
+	Grenades = FMath::Clamp(Grenades - 1, 0, MaxGrenades);
+	UpdateHUDGrenades();
 }
 
 void UCombatComponent::ShowAttachedGrenade(bool bShowGrenade)
@@ -308,18 +335,21 @@ void UCombatComponent::ShowAttachedGrenade(bool bShowGrenade)
 	}
 }
 
-void UCombatComponent::ServerThrowGrenade_Implementation()
+void UCombatComponent::OnRep_Grenades()
 {
-	CombatState = ECombateState::ECS_ThrowingGrenade;
+	UpdateHUDGrenades();
+}
 
-	if (Character)
+void UCombatComponent::UpdateHUDGrenades()
+{
+	Controller = Controller == nullptr ? Cast<ABlasterPlayerController>(Character->Controller) : Controller;
+
+	if (Controller)
 	{
-		Character->PlayThrowGrenadeMontage();
-		AttachActorToLeftHand(EquippedWeapon);
-		ShowAttachedGrenade(true);
-
+		Controller->SetHUDGrenades(Grenades);
 	}
 }
+
 
 void UCombatComponent::OnRep_CarriedAmmo()
 {

@@ -113,6 +113,17 @@ protected:
 	void OnRep_CombatState();
 
 	void ShowAttachedGrenade(bool bShowGrenade);
+
+	UPROPERTY(ReplicatedUsing=OnRep_Grenades)
+	int32 Grenades=4;
+
+	UFUNCTION()
+	void OnRep_Grenades();
+
+	UPROPERTY(EditAnywhere)
+	int32 MaxGrenades = 4;
+
+	void UpdateHUDGrenades();
 private:
 	UPROPERTY()
 	class ABlasterCharacter* Character;
@@ -164,5 +175,8 @@ private:
 	float ZoomInterpSpeed = 20.f;
 
 	void InterpFOV(float DeltaTime);
+
+	public:
+		int32 GetGrenades() const { return Grenades; }
 
 };
