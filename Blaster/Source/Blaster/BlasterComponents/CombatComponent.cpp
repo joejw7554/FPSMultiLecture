@@ -14,6 +14,7 @@
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/Character/BlasterAnimInstance.h"
+#include "Blaster/Weapon/Projectile.h"
 
 #define TRACE_LENGTH 800000
 
@@ -21,6 +22,14 @@ UCombatComponent::UCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+
+	//CDO
+	ConstructorHelpers::FClassFinder<AProjectile> projectileClass(L"/Script/Engine.Blueprint'/Game/Blueprints/Weapon/Projectiles/BP_ThrowGrenade.BP_ThrowGrenade_C'");
+
+	if (projectileClass.Succeeded())
+	{
+		GrenadeClass = projectileClass.Class;
+	}
 }
 
 void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -275,7 +284,7 @@ bool UCombatComponent::CanFire()
 
 void UCombatComponent::ThrowGrenade()
 {
-	if (CombatState != ECombateState::ECS_Unoccupied) return;
+	if (CombatState != ECombateState::ECS_Unoccupied || EquippedWeapon == nullptr) return;
 
 	CombatState = ECombateState::ECS_ThrowingGrenade;
 	if (Character)
@@ -427,7 +436,7 @@ void UCombatComponent::AttachActorToRightHand(AActor* ActorToAttach)
 
 void UCombatComponent::AttachActorToLeftHand(AActor* ActorToAttach)
 {
-	if (Character == nullptr || EquippedWeapon==nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr) return;
+	if (Character == nullptr || EquippedWeapon == nullptr || Character->GetMesh() == nullptr || ActorToAttach == nullptr) return;
 
 	bool bUsePistolSocket = EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Pistol || EquippedWeapon->GetWeaponType() == EWeaponType::EWT_SubmachineGun;
 
@@ -540,6 +549,17 @@ void UCombatComponent::LaunchGrenade()
 {
 	ShowAttachedGrenade(false);
 	//GetWorld()->SpawnActor<>();
+
+	if (Character && Character->HasAuthority() && GrenadeClass && Character->GetAttachedGrenade())
+	{
+		const FVector StartingLocation = Character->GetAttachedGrenade()->GetComponentLocation();
+		FVector ToTarget = HitTarget - StartingLocation;
+
+		FActorSpawnParameters param;
+		param.Owner = Character;
+		param.Instigator = Character;
+		GetWorld()->SpawnActor<AProjectile>(GrenadeClass, StartingLocation, ToTarget.Rotation(), param);
+	}
 }
 
 void UCombatComponent::HandleReload()

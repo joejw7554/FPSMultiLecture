@@ -89,6 +89,9 @@ protected:
 	UFUNCTION(Server,Reliable)
 	void ServerThrowGrenade();
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AProjectile> GrenadeClass;
+
 
 	///Carried ammo for the currently Equipped weapon
 	UPROPERTY(ReplicatedUsing = OnRep_CarriedAmmo)
