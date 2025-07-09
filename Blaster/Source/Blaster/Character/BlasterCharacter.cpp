@@ -17,6 +17,8 @@
 
 #include "Blaster/PlayerState/BlasterPlayerState.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
+#include "Blaster/BlasterComponents/BuffComponent.h"
+
 #include "Blaster/Weapon/Weapon.h"
 #include "Blaster/Weapon//WeaponTypes.h"
 #include "Blaster/Blaster.h"
@@ -55,6 +57,9 @@ ABlasterCharacter::ABlasterCharacter()
 
 	Combat = CreateDefaultSubobject<UCombatComponent>("Combat");
 	Combat->SetIsReplicated(true);
+
+	Buff = CreateDefaultSubobject<UBuffComponent>("Buff");
+	Buff->SetIsReplicated(true);
 
 	DissolveTimeline = CreateDefaultSubobject<UTimelineComponent>("DissolveTimelineComponent");
 
@@ -666,6 +671,11 @@ void ABlasterCharacter::PostInitializeComponents()
 	if (Combat)
 	{
 		Combat->Character = this;
+	}
+
+	if (Buff)
+	{
+		Buff->Character = this;
 	}
 }
 
