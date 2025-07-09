@@ -55,6 +55,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerLaunchGrenade(const FVector_NetQuantize& Target);
 
+	void PickupAmmo(EWeaponType WeaponType, int32 AmmoAmount);
 
 protected:
 	virtual void BeginPlay() override;
@@ -105,6 +106,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<EWeaponType, int32> CarriedAmmoMap; //TMap Type Cannot be replicated
+
+	UPROPERTY(EditDefaultsOnly)
+	int MaxCarreidAmmo = 500;
 
 	UPROPERTY(ReplicatedUsing = OnRep_CombatState)
 	ECombateState CombatState = ECombateState::ECS_Unoccupied;

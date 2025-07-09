@@ -1,14 +1,17 @@
 #include "Pickup.h"
 
+#include "Blaster/Weapon/WeaponTypes.h"
+
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
 
 
+
 APickup::APickup()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	bReplicates = true;
 
@@ -27,7 +30,7 @@ APickup::APickup()
 	PickupMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	PickupMesh->SetRelativeScale3D(FVector(3.f, 3.f, 3.f));
 	PickupMesh->bRenderCustomDepth = true;
-	PickupMesh->SetCustomDepthStencilValue(250.f);
+	PickupMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_PURPLE);
 }
 
 void APickup::BeginPlay()
@@ -44,6 +47,11 @@ void APickup::BeginPlay()
 void APickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (PickupMesh)
+	{
+		PickupMesh->AddWorldRotation(FRotator(0.f, BaseTurnRate * DeltaTime, 0.f));
+	}
 
 }
 
